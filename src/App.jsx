@@ -6,6 +6,7 @@ import "./App.css";
 function App() {
   const [expenses, setExpenses] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortAlphabetically, setSortAlphabetically] = useState(false);
 
   const handleAddExpense = (e) => {
     e.preventDefault();
@@ -22,9 +23,18 @@ function App() {
     form.reset();
   };
 
-  const filteredExpenses = expenses.filter((expense) =>
-    expense.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleDeleteExpense = (id) => {
+    setExpenses((prev) => prev.filter((expense) => expense.id !== id));
+  };
+
+  const filteredExpenses = expenses
+    .filter((expense) =>
+      expense.name.toLowerCase().includes(searchQuery.toLowerCase()) || expense.description.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (!sortAlphabetically) return 0;
+      return a.name.localeCompare(b.name);
+    });
 
   return (
     <div className="app-container">
@@ -48,6 +58,16 @@ function App() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
+
+        <label className="sort-toggle">
+          <input
+            type="checkbox"
+            checked={sortAlphabetically}
+            onChange={(e) => setSortAlphabetically(e.target.checked)}
+          />
+          Sort Alphabetically (A–Z)
+        </label>
+
         <h2>All Expenses</h2>
         <table className="expenses-table">
           <thead>
@@ -57,19 +77,22 @@ function App() {
               <th>Category</th>
               <th>Amount</th>
               <th>Date</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {filteredExpenses.map((expense) => (
-              <NewExpense key={expense.id} expense={expense} />
+              <NewExpense
+                key={expense.id}
+                expense={expense}
+                onDelete={() => handleDeleteExpense(expense.id)}
+              />
             ))}
           </tbody>
         </table>
-
       </div>
     </div>
   );
 }
 
 export default App;
-
