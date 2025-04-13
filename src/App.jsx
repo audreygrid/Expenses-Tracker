@@ -77,7 +77,7 @@ function App() {
               <th>Category</th>
               <th>Amount</th>
               <th>Date</th>
-              
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
